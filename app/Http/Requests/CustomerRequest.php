@@ -38,8 +38,10 @@ class CustomerRequest extends FormRequest
             'info.loan.amt' => 'required|string',
             'info.loan.time' => 'required|string',
             'info.assets' => 'required|string',
-            'info.files' => $files_rule . '|array',
-            'info.notes' => 'string',
+            'info.files.saler' => $files_rule . '|array',
+            'info.files.appraiser' => $files_rule . '|array',
+            'info.notes.saler' => 'string',
+            'info.notes.appraiser' => 'string',
             'info.relative_contacts.*.phone' => 'required|string|max:15',
             'info.relative_contacts.*.relative' => 'required|string'
         ];
@@ -55,14 +57,5 @@ class CustomerRequest extends FormRequest
             'info.*.*.max' => 'Tối đa :max ký tự',
             'info.*.*.*.max' => 'Tối đa :max ký tự',
         ];
-    }
-
-    public function prepareForValidation() {
-        if ($this->files == null) {
-            $this->request->remove('files');
-        }
-        if ($this->notes == null) {
-            $this->request->remove('notes');
-        }
     }
 }

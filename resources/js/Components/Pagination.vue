@@ -1,6 +1,6 @@
 <template>
-    <div v-if="model.data.length > 0" class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-        <div v-if="model.data.length > 0" class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+    <div v-if="model.data" class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
                 <p class="text-sm text-gray-700">
                     Showing <span class="font-medium">{{ model.from }}</span> to <span class="font-medium">{{ model.to }}</span> of <span class="font-medium">{{ model.total }}</span> results

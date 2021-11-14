@@ -18,7 +18,7 @@
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <div class="space-x-8 -my-px ml-10 flex">
                                 <jet-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </jet-nav-link>
@@ -261,6 +261,17 @@
             JetNavLink,
             JetResponsiveNavLink,
             Link,
+        },
+
+        watch: {
+            '$page.props.flash': {
+                handler(val) {
+                    if (typeof val != 'undefined') {
+                        this.$toast[val.type](val[val.type]);
+                    }
+                },
+                deep: true
+            },
         },
 
         data() {

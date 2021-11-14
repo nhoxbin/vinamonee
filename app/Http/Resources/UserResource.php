@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'roles' => [
                 'isAdmin' => $this->hasRole('admin'),
                 'isActive' => $this->hasAnyRole('admin', 'saler', 'appraiser', 'disburser'),
+                'isSaler' => $this->hasAnyRole('admin', 'saler'),
                 'isAppraiser' => $this->hasAnyRole('admin', 'appraiser'),
                 'isDisburser' => $this->hasAnyRole('admin', 'disburser'),
             ]

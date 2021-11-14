@@ -7,6 +7,7 @@ export default {
             return {
                 preserveScroll: true,
                 onSuccess: (page) => {
+                    this.$toast.success('Lưu thành công.');
                     this.form.reset();
                 },
             };

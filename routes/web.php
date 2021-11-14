@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -34,8 +35,13 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)->only('index', 'update', 'destroy')->middleware('admin');
-    Route::put('customers/{customer}/approved', [App\Http\Controllers\CustomerController::class, 'approved'])->name('approved')->middleware('active');
-    Route::resource('customers', CustomerController::class)->middleware('active');
+    Route::resource('customers', CustomerController::class);
+    Route::resource('customers.payments', PaymentController::class)->only('store', 'update');
+
+    Route::prefix('customers')->middleware(['active'])->group(function () {
+        Route::post('get', [App\Http\Controllers\CustomerController::class, 'getCustomers'])->name('customers.get');
+        Route::put('{customer}/approved', [App\Http\Controllers\CustomerController::class, 'approved'])->name('approved');
+    });
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {

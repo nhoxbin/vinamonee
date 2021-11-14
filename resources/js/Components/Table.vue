@@ -12,8 +12,8 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
             <slot></slot>
-            <tr v-if="model.data.length === 0">
-                <td colspan="7" class="px-6 py-4 whitespace-nowrap text-center">No data</td>
+            <tr v-if="!model.data">
+                <td :colspan="headers.length + 1" class="px-6 py-4 whitespace-nowrap text-center">No data</td>
             </tr>
         </tbody>
     </table>

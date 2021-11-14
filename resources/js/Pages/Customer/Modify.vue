@@ -11,6 +11,11 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="mt-10 sm:mt-0">
+                    <div class="mb-3 flex flex-col">
+                        <div class="grid justify-items-end">
+                            <Link :href="route('customers.index')" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Quay lại</Link>
+                        </div>
+                    </div>
                     <div class="md:grid md:grid-cols-3 md:gap-6">
                         <div class="md:col-span-1">
                             <div class="px-4 sm:px-0">
@@ -115,7 +120,11 @@
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="loan_time" class="block text-sm font-medium text-gray-700">Thời gian</label>
-                                                <input type="text" v-model="form.info.loan.time" id="loan_time" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                                <select v-model="form.info.loan.time" id="loan_time" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                                    <option value="30" :selected="form.info.loan.time == 30">30 Ngày</option>
+                                                    <option value="60" :selected="form.info.loan.time == 60">60 Ngày</option>
+                                                    <option value="90" :selected="form.info.loan.time == 90">90 Ngày</option>
+                                                </select>
                                                 <span v-if="form.errors.hasOwnProperty('info.loan.time')" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
                                                     {{ form.errors['info.loan.time'] }}
                                                 </span>
@@ -161,21 +170,39 @@
                                                 </span>
                                             </div>
 
-                                            <div class="col-span-6 sm:col-span-3">
-                                                <label for="files" class="block text-sm font-medium text-gray-700">Hình ảnh</label>
-                                                <input type="file" @change="handleFileUpload($event)" multiple id="files" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                            <div v-if="user.roles.isSaler" class="col-span-6 sm:col-span-3">
+                                                <label for="files_saler" class="block text-sm font-medium text-gray-700">Hình ảnh của sale</label>
+                                                <input type="file" @change="handleFileUpload($event, 'saler')" multiple id="files_saler" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
-                                                <span v-if="form.errors.hasOwnProperty('info.files')" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                                                    {{ form.errors['info.files'] }}
+                                                <span v-if="form.errors.hasOwnProperty('info.files.saler')" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                                    {{ form.errors['info.files.saler'] }}
                                                 </span>
                                             </div>
 
-                                            <div class="col-span-6 sm:col-span-6">
-                                                <label for="note" class="block text-sm font-medium text-gray-700">
-                                                    Ghi chú
+                                            <div v-if="user.roles.isAppraiser" class="col-span-6 sm:col-span-3">
+                                                <label for="files_appraiser" class="block text-sm font-medium text-gray-700">Hình ảnh của thẩm định</label>
+                                                <input type="file" @change="handleFileUpload($event, 'appraiser')" multiple id="files_appraiser" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+
+                                                <span v-if="form.errors.hasOwnProperty('info.files.appraiser')" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                                    {{ form.errors['info.files.appraiser'] }}
+                                                </span>
+                                            </div>
+
+                                            <div v-if="user.roles.isSaler" class="col-span-6 sm:col-span-6">
+                                                <label for="notes_saler" class="block text-sm font-medium text-gray-700">
+                                                    Ghi chú của sale
                                                 </label>
                                                 <div class="mt-1">
-                                                    <textarea id="note" v-model="form.info.notes" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"></textarea>
+                                                    <textarea id="notes_saler" v-model="form.info.notes.saler" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div v-if="user.roles.isAppraiser" class="col-span-6 sm:col-span-6">
+                                                <label for="notes_appraiser" class="block text-sm font-medium text-gray-700">
+                                                    Ghi chú của thẩm định
+                                                </label>
+                                                <div class="mt-1">
+                                                    <textarea id="notes_appraiser" v-model="form.info.notes.appraiser" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -183,16 +210,16 @@
                                     <div class="px-4 py-3 bg-gray-50 sm:px-6">
                                         <div class="grid grid-cols-6 gap-6">
                                             <div class="col-span-3 sm:col-span-3 text-left">
-                                                <button @click.prevent="approved('is_appraised')" v-if="$page.props.user.roles.isAppraiser" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2">
+                                                <button @click.prevent="approved('is_appraised')" v-if="user.roles.isAppraiser" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2">
                                                     Thẩm định
                                                 </button>
-                                                <button @click.prevent="approved('is_disbursed')" v-if="$page.props.user.roles.isDisburser" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                <button @click.prevent="approved('is_disbursed')" v-if="user.roles.isDisburser" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                                     Giải ngân
                                                 </button>
                                             </div>
                                             <div class="col-span-3 sm:col-span-3 text-right">
-                                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                                    Save
+                                                <button v-if="user.roles.isSaler || user.roles.isAppraiser" type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                    Lưu
                                                 </button>
                                             </div>
                                         </div>
@@ -204,25 +231,62 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="customer.payments" class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="mt-10 sm:mt-0">
+                    <div class="flex flex-col">
+                        <div class="mb-3 flex flex-col">
+                            <div class="grid justify-items-end">
+                                <button @click="paid(route('customers.payments.store', customer.id), 'post')" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Thanh toán</button>
+                            </div>
+                        </div>
+                        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                                <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                                    <Table :headers="['Số tiền', 'Thời gian']" :model="customer.payments">
+                                        <tr v-for="payment in customer.payments.data" :key="payment.id">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="font-medium text-gray-900">
+                                                    {{ payment.amt }}
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                {{ payment.created_date }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <button @click="paid(route('customers.payments.update', [customer.id, payment.id]), 'put')" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Cập nhật</button>
+                                            </td>
+                                        </tr>
+                                    </Table>
+                                    <Pagination :model="customer.payments" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </app-layout>
 </template>
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { Head } from '@inertiajs/inertia-vue3'
+import { Head, Link } from '@inertiajs/inertia-vue3'
 import modification from '@/Mixins/modification'
+import Table from '@/Components/Table'
+import Pagination from '@/Components/Pagination'
 
 export default {
     components: {
         AppLayout,
-        Head,
+        Head, Link,
+        Table, Pagination
     },
-    props: ['customer'],
+    props: ['user', 'customer'],
     mixins: [modification],
     data: function() {
         return {
-            files: null,
-            errors: {},
             form: this.$inertia.form(this.customer)
         }
     },
@@ -235,10 +299,33 @@ export default {
             }
         },
     },
+    watch: {
+        'form.info.loan.amt': function(val) {
+            this.form.info.loan.amt = val.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        },
+        'form.info.income': function(val) {
+            this.form.info.income = val.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        },
+    },
     methods: {
-        handleFileUpload(e) {
+        handleFileUpload(e, role) {
             for (var i = 0; i < e.target.files.length; i++) {
-                this.form.info.files[i] = e.target.files[i];
+                this.form.info.files[role][i] = e.target.files[i];
+            }
+        },
+        async paid(route, method) {
+            let amt = await this.$swal({
+                title: this.customer.info.name + ' đã thanh toán với số tiền?',
+                input: 'text',
+                inputPlaceholder: 'Nhập số tiền',
+                showCloseButton: true,
+            });
+            if (amt.isConfirmed) {
+                axios[method](route, {amt: amt.value}).then(resp => {
+                    this.$toast.success('Thao tác thành công.')
+                }).catch(err => {
+                    this.$toast.error(err.response.data.errors.amt[0]);
+                })
             }
         },
         approved(type) {
