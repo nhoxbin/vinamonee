@@ -68,12 +68,12 @@ class CustomerController extends Controller
         unset($validated['info']['files']);
         $customer = Customer::create($validated);
 
-        if (count($request->info['files']['saler'])) {
+        if (isset($request->info['files']['saler']) && count($request->info['files']['saler'])) {
             $customer->addMultipleMediaFromRequest(['info.files.saler'])->each(function ($fileAdder) {
                 $fileAdder->toMediaCollection('saler_files');
             });
         }
-        if (count($request->info['files']['appraiser'])) {
+        if (isset($request->info['files']['appraiser']) && count($request->info['files']['appraiser'])) {
             $customer->addMultipleMediaFromRequest(['info.files.appraiser'])->each(function ($fileAdder) {
                 $fileAdder->toMediaCollection('appraiser_files');
             });

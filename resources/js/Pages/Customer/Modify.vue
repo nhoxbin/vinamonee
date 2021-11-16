@@ -248,7 +248,7 @@
                                         <tr v-for="payment in customer.payments.data" :key="payment.id">
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="font-medium text-gray-900">
-                                                    {{ payment.amt }}
+                                                    {{ payment.amount }}
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">

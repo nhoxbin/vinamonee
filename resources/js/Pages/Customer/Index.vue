@@ -49,7 +49,7 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ customer.is_disbursed ? 'Đã giải ngân' : (customer.is_appraised ? 'Đã thẩm định' : 'Chưa duyệt') }}
+                                            {{ customer.status }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <Link :href="route('customers.edit', customer.id)" class="text-indigo-600 hover:text-indigo-900">

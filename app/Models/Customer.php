@@ -16,11 +16,15 @@ class Customer extends Model implements HasMedia
     protected $fillable = ['info', 'is_appraised', 'is_disbursed'];
     protected $casts = ['info' => 'json'];
 
-    protected $appends = ['files'];
+    protected $appends = ['status', 'files'];
 
     public function getFilesAttribute() {
         // return $this->getMedia('customers')->getUrl('thumb');
         return null;
+    }
+
+    public function getStatusAttribute() {
+        return $this->is_disbursed ? 'Đã giải ngân' : ($this->is_appraised ? 'Đã thẩm định' : 'Chưa duyệt');
     }
 
     public function payments() : HasMany {
