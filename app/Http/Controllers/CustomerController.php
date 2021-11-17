@@ -105,16 +105,30 @@ class CustomerController extends Controller
         $customer->update($validated);
 
         if (isset($request->info['images']['saler']) && count($request->info['images']['saler'])) {
-            $customer->addMultipleMediaFromRequest(['info.images.saler'])->each(function ($fileAdder) {
+            $files = [];
+            for ($i=0; $i < count($request->info['images']['saler']); $i++) {
+                array_push($files, 'info.images.saler.'.$i);
+            }
+            $customer->addMultipleMediaFromRequest($files)->each(function ($fileAdder) {
                 $fileAdder->toMediaCollection('saler_files');
             });
         }
         if (isset($request->info['images']['appraiser']) && count($request->info['images']['appraiser'])) {
-            $customer->addMultipleMediaFromRequest(['info.images.appraiser'])->each(function ($fileAdder) {
+            $files = [];
+            for ($i=0; $i < count($request->info['images']['appraiser']); $i++) {
+                array_push($files, 'info.images.appraiser.'.$i);
+            }
+            $customer->addMultipleMediaFromRequest($files)->each(function ($fileAdder) {
                 $fileAdder->toMediaCollection('appraiser_files');
             });
         }
+
         return redirect()->route('customers.index');
+    }
+
+    public function deleteMedia(Request $request, Customer $customer) {
+        $customer->getMedia($request->collection_name)->find($request->file_id)->delete();
+        return response()->noContent();
     }
 
     public function destroy(Customer $customer) {

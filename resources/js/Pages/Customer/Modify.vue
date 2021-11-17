@@ -180,7 +180,7 @@
                                                 <div v-if="customer.images">
                                                     <div v-for="(file, i) in customer.images.saler" :key="i">
                                                         <a :href="file.original_url" target="_blank" class="">Hình ảnh {{ i+1 }}</a>
-                                                        <button @click="deleteImg(file)">&emsp;X</button>
+                                                        <button @click.prevent="deleteImg(customer.images.saler, file)">&emsp;X</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -195,7 +195,7 @@
                                                 <div v-if="customer.images">
                                                     <div v-for="(file, i) in customer.images.appraiser" :key="i">
                                                         <a :href="file.original_url" target="_blank" class="">Hình ảnh {{ i+1 }}</a>
-                                                        <button @click="deleteImg(file)">&emsp;X</button>
+                                                        <button @click.prevent="deleteImg(customer.images.appraiser, file)">&emsp;X</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -244,7 +244,7 @@
             </div>
         </div>
 
-        <!-- <div v-if="user.roles.isDisburser && customer.payments" class="py-12">
+        <div v-if="user.roles.isDisburser && customer.payments" class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="mt-10 sm:mt-0">
                     <div class="flex flex-col">
@@ -278,7 +278,7 @@
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
     </app-layout>
 </template>
 
@@ -352,6 +352,15 @@ export default {
                 } else if (result.isDenied) {
 
                 }
+            })
+        },
+        deleteImg(files, file) {
+            axios.post(route('customers.deleteMedia', this.customer.id), {
+                file_id: file.id,
+                collection_name: file.collection_name
+            }).then(resp => {
+                files.splice(files.findIndex(f => f.id == file.id), 1);
+                this.$toast.success('Đã xóa hình ảnh.');
             })
         }
     }
