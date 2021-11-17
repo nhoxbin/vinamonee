@@ -14,8 +14,11 @@ export default {
         },
 
         modify() {
-            var method = route().current('*.create') ? 'post' : 'put';
-            this.form[method](this.endpoint, this.options());
+            var method = route().current('*.create') ? 'post' : 'patch';
+            this.form.transform((data) => ({
+                ...data,
+                _method: method
+            })).post(this.endpoint, this.options());
         }
     }
 }

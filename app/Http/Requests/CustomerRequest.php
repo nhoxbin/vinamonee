@@ -23,13 +23,9 @@ class CustomerRequest extends FormRequest
      */
     public function rules()
     {
-        $files_rule_saler = $files_rule_appraiser = 'sometimes';
-        if (request()->routeIs('customers.store')) {
-            if (request()->user()->hasRole('saler')) $files_rule_saler = 'required';
-            if (request()->user()->hasRole('appraiser')) $files_rule_appraiser = 'required';
-        }
-
         return [
+            'info.images.saler' => 'array',
+            'info.images.appraiser' => 'array',
             'info.name' => 'required|string',
             'info.dob' => 'required|string',
             'info.cmnd.number' => 'required|string|max:12',
@@ -43,8 +39,6 @@ class CustomerRequest extends FormRequest
             'info.loan.amt' => 'required|string',
             'info.loan.time' => 'required|string',
             'info.assets' => 'required|string',
-            'info.files.saler' => $files_rule_saler . '|array',
-            'info.files.appraiser' => $files_rule_appraiser . '|array',
             'info.notes.saler' => 'string',
             'info.notes.appraiser' => 'string',
             'info.relative_contacts.*.phone' => 'required|string|max:15',

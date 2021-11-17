@@ -47,7 +47,7 @@ class CustomerController extends Controller
                         'saler' => [],
                         'appraiser' => [],
                     ],
-                    'files' => [
+                    'images' => [
                         'saler' => [],
                         'appraiser' => [],
                     ],
@@ -65,16 +65,16 @@ class CustomerController extends Controller
 
     public function store(CustomerRequest $request) {
         $validated = $request->validated();
-        unset($validated['info']['files']);
-        $customer = Customer::create($validated);
+        $validated['info']['images']['saler'] = $validated['info']['images']['appraiser'] = [];
+        $customer = $request->user()->customers()->create($validated);
 
-        if (isset($request->info['files']['saler']) && count($request->info['files']['saler'])) {
-            $customer->addMultipleMediaFromRequest(['info.files.saler'])->each(function ($fileAdder) {
+        if (isset($request->info['images']['saler']) && count($request->info['images']['saler'])) {
+            $customer->addMultipleMediaFromRequest(['info.images.saler'])->each(function ($fileAdder) {
                 $fileAdder->toMediaCollection('saler_files');
             });
         }
-        if (isset($request->info['files']['appraiser']) && count($request->info['files']['appraiser'])) {
-            $customer->addMultipleMediaFromRequest(['info.files.appraiser'])->each(function ($fileAdder) {
+        if (isset($request->info['images']['appraiser']) && count($request->info['images']['appraiser'])) {
+            $customer->addMultipleMediaFromRequest(['info.images.appraiser'])->each(function ($fileAdder) {
                 $fileAdder->toMediaCollection('appraiser_files');
             });
         }
@@ -90,16 +90,30 @@ class CustomerController extends Controller
     }
 
     public function approved(Request $request, Customer $customer) {
-        $type = ['is_appraised', 'is_disbursed'];
+        $type = ['appraised', 'disbursed'];
         if (in_array($request->type, $type)) {
-            $customer->{$request->type} = true;
+            $customer->{'is_' . $request->type} = true;
+            $customer->{$request->type . '_by'} = $request->user()->id;
             $customer->save();
             return response()->noContent();
         }
     }
 
     public function update(CustomerRequest $request, Customer $customer) {
-        $customer->update($request->validated());
+        $validated = $request->validated();
+        $validated['info']['images']['saler'] = $validated['info']['images']['appraiser'] = [];
+        $customer->update($validated);
+
+        if (isset($request->info['images']['saler']) && count($request->info['images']['saler'])) {
+            $customer->addMultipleMediaFromRequest(['info.images.saler'])->each(function ($fileAdder) {
+                $fileAdder->toMediaCollection('saler_files');
+            });
+        }
+        if (isset($request->info['images']['appraiser']) && count($request->info['images']['appraiser'])) {
+            $customer->addMultipleMediaFromRequest(['info.images.appraiser'])->each(function ($fileAdder) {
+                $fileAdder->toMediaCollection('appraiser_files');
+            });
+        }
         return redirect()->route('customers.index');
     }
 

@@ -15,6 +15,7 @@ class CreateCustomersTable extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->nullable()->cascadeOnUpdate()->setNullOnDelete();
             $table->json('info');
             /* Tên, ngày sinh
             - Số chưng minh, ngày cấp, nơi cấp
@@ -27,7 +28,9 @@ class CreateCustomersTable extends Migration
             - Tài sản đảm bảo( các loại giấy tờ )
             - 2 số điện thoại tham chiếu người thân */
             $table->boolean('is_appraised')->default(false); // thẩm định
+            $table->foreignId('appraised_by')->nullable()->constrained('users')->cascadeOnUpdate()->setNullOnDelete(); // thẩm định
             $table->boolean('is_disbursed')->default(false); // giải ngân
+            $table->foreignId('disbursed_by')->nullable()->constrained('users')->cascadeOnUpdate()->setNullOnDelete(); // giải ngân
             $table->timestamps();
         });
     }

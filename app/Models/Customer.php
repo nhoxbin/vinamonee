@@ -13,14 +13,16 @@ class Customer extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
 
-    protected $fillable = ['info', 'is_appraised', 'is_disbursed'];
+    protected $fillable = ['info', 'is_appraised', 'is_disbursed', 'appraised_by', 'disbursed_by'];
     protected $casts = ['info' => 'json'];
+    protected $with = ['media'];
+    protected $appends = ['status', 'images'];
 
-    protected $appends = ['status', 'files'];
-
-    public function getFilesAttribute() {
-        // return $this->getMedia('customers')->getUrl('thumb');
-        return null;
+    public function getImagesAttribute() {
+        return collect([
+            'saler' => $this->getMedia('saler_files'),
+            'appraiser' => $this->getMedia('appraiser_files'),
+        ]);
     }
 
     public function getStatusAttribute() {
@@ -29,5 +31,9 @@ class Customer extends Model implements HasMedia
 
     public function payments() : HasMany {
         return $this->hasMany(Payment::class)->latest('id');
+    }
+
+    public function profiles() {
+        return $this->belongsToMany(Profile::class, 'profiles', 'id', 'created_by')->latest('id');
     }
 }

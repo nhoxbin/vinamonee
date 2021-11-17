@@ -172,20 +172,32 @@
 
                                             <div v-if="user.roles.isSaler" class="col-span-6 sm:col-span-3">
                                                 <label for="files_saler" class="block text-sm font-medium text-gray-700">Hình ảnh của sale</label>
-                                                <input type="file" @change="handleFileUpload($event, 'saler')" multiple id="files_saler" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                                <input type="file" @change="form.info.images.saler = [...$event.target.files]" multiple id="files_saler" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
-                                                <span v-if="form.errors.hasOwnProperty('info.files.saler')" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                                                    {{ form.errors['info.files.saler'] }}
+                                                <span v-if="form.errors.hasOwnProperty('info.images.saler')" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                                    {{ form.errors['info.images.saler'] }}
                                                 </span>
+                                                <div v-if="customer.images">
+                                                    <div v-for="(file, i) in customer.images.saler" :key="i">
+                                                        <a :href="file.original_url" target="_blank" class="">Hình ảnh {{ i+1 }}</a>
+                                                        <button @click="deleteImg(file)">&emsp;X</button>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div v-if="user.roles.isAppraiser" class="col-span-6 sm:col-span-3">
                                                 <label for="files_appraiser" class="block text-sm font-medium text-gray-700">Hình ảnh của thẩm định</label>
-                                                <input type="file" @change="handleFileUpload($event, 'appraiser')" multiple id="files_appraiser" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                                <input type="file" @change="form.info.images.appraiser = [...$event.target.files]" multiple id="files_appraiser" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
-                                                <span v-if="form.errors.hasOwnProperty('info.files.appraiser')" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                                                    {{ form.errors['info.files.appraiser'] }}
+                                                <span v-if="form.errors.hasOwnProperty('info.images.appraiser')" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                                                    {{ form.errors['info.images.appraiser'] }}
                                                 </span>
+                                                <div v-if="customer.images">
+                                                    <div v-for="(file, i) in customer.images.appraiser" :key="i">
+                                                        <a :href="file.original_url" target="_blank" class="">Hình ảnh {{ i+1 }}</a>
+                                                        <button @click="deleteImg(file)">&emsp;X</button>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div v-if="user.roles.isSaler" class="col-span-6 sm:col-span-6">
@@ -209,11 +221,11 @@
                                     </div>
                                     <div class="px-4 py-3 bg-gray-50 sm:px-6">
                                         <div class="grid grid-cols-6 gap-6">
-                                            <div class="col-span-3 sm:col-span-3 text-left">
-                                                <button @click.prevent="approved('is_appraised')" v-if="user.roles.isAppraiser" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2">
+                                            <div v-if="!route().current('customers.create')" class="col-span-3 sm:col-span-3 text-left">
+                                                <button @click.prevent="approved('appraised')" v-if="user.roles.isAppraiser" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2">
                                                     Thẩm định
                                                 </button>
-                                                <button @click.prevent="approved('is_disbursed')" v-if="user.roles.isDisburser" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                <button @click.prevent="approved('disbursed')" v-if="user.roles.isDisburser" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                                     Giải ngân
                                                 </button>
                                             </div>
@@ -232,7 +244,7 @@
             </div>
         </div>
 
-        <div v-if="customer.payments" class="py-12">
+        <!-- <div v-if="user.roles.isDisburser && customer.payments" class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="mt-10 sm:mt-0">
                     <div class="flex flex-col">
@@ -266,7 +278,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </app-layout>
 </template>
 
@@ -308,11 +320,6 @@ export default {
         },
     },
     methods: {
-        handleFileUpload(e, role) {
-            for (var i = 0; i < e.target.files.length; i++) {
-                this.form.info.files[role][i] = e.target.files[i];
-            }
-        },
         async paid(route, method) {
             let amt = await this.$swal({
                 title: this.customer.info.name + ' đã thanh toán với số tiền?',
@@ -329,7 +336,7 @@ export default {
             }
         },
         approved(type) {
-            var msg = type == 'is_appraised' ? 'thẩm định!' : 'giải ngân!';
+            var msg = type == 'appraised' ? 'thẩm định!' : 'giải ngân!';
             this.$swal.fire({
                 title: 'Hồ sơ này sẽ được ' + msg,
                 showDenyButton: true,

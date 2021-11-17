@@ -30,12 +30,12 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]); */
-    return redirect()->route('register');
+    return redirect()->route('login');
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)->only('index', 'update', 'destroy')->middleware('admin');
-    Route::resource('customers', CustomerController::class);
+    Route::resource('customers', CustomerController::class)->middleware('active');
     Route::resource('customers.payments', PaymentController::class)->only('store', 'update');
 
     Route::prefix('customers')->middleware(['active'])->group(function () {
