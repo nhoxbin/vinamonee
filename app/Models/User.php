@@ -65,4 +65,8 @@ class User extends Authenticatable
     public function customers() {
         return $this->hasMany(Customer::class);
     }
+
+    public function customers_appraised() {
+        return $this->hasMany(Customer::class, 'appraised_by');
+    }
 }

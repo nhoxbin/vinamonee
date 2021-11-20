@@ -29,6 +29,9 @@
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Chức vụ
                                             </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Số hồ sơ
+                                            </th>
                                             <th scope="col" class="relative px-6 py-3">
                                                 <span class="sr-only">Edit</span>
                                             </th>
@@ -53,12 +56,15 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {{ user.roles[0].name.toUpperCase() }}
                                             </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ user.customers || user.customers_appraised_count || 0 }}
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <button v-if="!(user.roles[0].name == 'admin')" @click.prevent="modifyRole(user, 'saler')" class="text-indigo-600 hover:text-indigo-900 mr-2">Saler</button>
-                                                <button v-if="!(user.roles[0].name == 'admin')" @click.prevent="modifyRole(user, 'appraiser')" class="text-indigo-600 hover:text-indigo-900 mr-2">Thẩm định</button>
-                                                <button v-if="!(user.roles[0].name == 'admin')" @click.prevent="modifyRole(user, 'disburser')" class="text-indigo-600 hover:text-indigo-900 mr-2">Giải ngân</button>
-                                                <button v-if="!(user.roles[0].name == 'admin')" @click.prevent="modifyRole(user, 'member')" class="text-indigo-600 hover:text-indigo-900 mr-2">Hạ quyền</button>
-                                                <button v-if="!(user.roles[0].name == 'admin')" @click.prevent="destroy(user.id)" class="text-indigo-600 hover:text-indigo-900">Xóa</button>
+                                                <button @click.prevent="modifyRole(user, 'saler')" class="text-indigo-600 hover:text-indigo-900 mr-2">Saler</button>
+                                                <button @click.prevent="modifyRole(user, 'appraiser')" class="text-indigo-600 hover:text-indigo-900 mr-2">Thẩm định</button>
+                                                <button @click.prevent="modifyRole(user, 'disburser')" class="text-indigo-600 hover:text-indigo-900 mr-2">Giải ngân</button>
+                                                <button @click.prevent="modifyRole(user, 'member')" class="text-indigo-600 hover:text-indigo-900 mr-2">Hạ quyền</button>
+                                                <button @click.prevent="destroy(user.id)" class="text-indigo-600 hover:text-indigo-900">Xóa</button>
                                             </td>
                                         </tr>
                                     </tbody>

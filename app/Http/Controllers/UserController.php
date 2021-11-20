@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function index() {
         return Inertia::render('User/Index', [
-            'users' => User::with(['roles' => fn($q) => $q->select('name')])->latest('id')->paginate(10),
+            'users' => User::with(['roles' => fn($q) => $q->select('name')])->withCount('customers_appraised', 'customers')->latest('id')->paginate(10),
         ]);
     }
 

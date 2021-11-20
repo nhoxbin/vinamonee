@@ -83,6 +83,7 @@ class CustomerController extends Controller
     }
 
     public function edit(Customer $customer) {
+        $customer->setRelation('appraiser', $customer->appraiser()->first());
         $customer->setRelation('payments', $customer->payments()->paginate(10));
         return Inertia::render('Customer/Modify', [
             'customer' => $customer,
@@ -95,7 +96,7 @@ class CustomerController extends Controller
             $customer->{'is_' . $request->type} = true;
             $customer->{$request->type . '_by'} = $request->user()->id;
             $customer->save();
-            return response()->noContent();
+            return response()->json($customer->appraiser);
         }
     }
 
