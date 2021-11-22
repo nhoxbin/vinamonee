@@ -222,7 +222,7 @@
                                     <div class="px-4 py-3 bg-gray-50 sm:px-6">
                                         <div class="grid grid-cols-6 gap-6">
                                             <div v-if="!route().current('customers.create')" class="col-span-3 sm:col-span-3 text-left">
-                                                <button @click.prevent="approved('appraised')" v-if="user.roles.isAppraiser && !customer.is_appraised" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2">
+                                                <button @click.prevent="approved('appraised')" v-if="user.roles.isAppraiser && customer.is_appraised == 0" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2">
                                                     Thẩm định
                                                 </button>
                                                 <span v-else>
