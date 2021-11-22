@@ -229,7 +229,7 @@
                                                     Hồ sơ đã được thẩm định bởi {{ customer.appraiser.name }}
                                                 </span>
 
-                                                <button @click.prevent="approved('disbursed')" v-if="user.roles.isDisburser && !customer.is_disbursed" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                <button @click.prevent="approved('disbursed')" v-if="user.roles.isDisburser && customer.is_disbursed == 0" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                                     Giải ngân
                                                 </button>
                                             </div>
@@ -248,7 +248,7 @@
             </div>
         </div>
 
-        <div v-if="user.roles.isDisburser && customer.is_disbursed" class="py-12">
+        <div v-if="user.roles.isDisburser && customer.is_disbursed == 1" class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="mt-10 sm:mt-0">
                     <div class="flex flex-col">
