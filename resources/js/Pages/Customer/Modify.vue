@@ -193,8 +193,8 @@
                                                     {{ form.errors['info.images.appraiser'] }}
                                                 </span>
                                                 <div v-if="customer.images">
-                                                    <div v-for="(file, i) in customer.images.appraiser" :key="i">
-                                                        <a :href="file.original_url" target="_blank" class="">Hình ảnh {{ i+1 }}</a>
+                                                    <div v-for="file in customer.images.appraiser" :key="file.uuid">
+                                                        <a :href="file.original_url" target="_blank" class="">{{ file.name }}</a>
                                                         <button @click.prevent="deleteImg(customer.images.appraiser, file)">&emsp;X</button>
                                                     </div>
                                                 </div>
