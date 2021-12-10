@@ -39,7 +39,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customers.payments', PaymentController::class)->only('store', 'update');
 
     Route::prefix('customers')->middleware(['active'])->group(function () {
-        Route::post('get', [App\Http\Controllers\CustomerController::class, 'getCustomers'])->name('customers.get');
         Route::post('{customer}/deleteMedia', [App\Http\Controllers\CustomerController::class, 'deleteMedia'])->name('customers.deleteMedia');
         Route::put('{customer}/approved', [App\Http\Controllers\CustomerController::class, 'approved'])->name('approved');
     });

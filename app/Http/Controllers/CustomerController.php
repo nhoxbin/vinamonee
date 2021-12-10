@@ -9,17 +9,17 @@ use Inertia\Inertia;
 
 class CustomerController extends Controller
 {
-    public function getCustomers(Request $request) {
+    public function index(Request $request) {
         $customers = Customer::query();
         $customers = $customers->latest('id');
-        if ($request->search) {
-            $customers = $customers->where('info->cmnd->number', 'like', '%'.$request->search.'%');
-        }
-        return response()->json($customers->paginate(10));
-    }
 
-    public function index() {
-        return Inertia::render('Customer/Index');
+        if ($request->ajax() && $request->search) {
+            $customers = $customers->where('info->cmnd->number', 'like', '%'.$request->search.'%');
+            return response()->json($customers->paginate(10));
+        }
+        return Inertia::render('Customer/Index', [
+            'customers' => $customers->paginate(10)
+        ]);
     }
 
     public function create() {

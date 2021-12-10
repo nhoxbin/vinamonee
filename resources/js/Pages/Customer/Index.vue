@@ -31,7 +31,7 @@
                         <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                 <Table :headers="['Tên / CMND', 'Địa chỉ', 'Số tiền vay', 'Trạng thái']" :model="customers">
-                                    <tr v-for="customer in customers.data" :key="customer.id">
+                                    <tr v-for="customer in searched_customers.data" :key="customer.id">
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="font-medium text-gray-900">
                                                 {{ customer.info.name }}
@@ -59,7 +59,7 @@
                                         </td>
                                     </tr>
                                 </Table>
-                                <Pagination :model="customers" />
+                                <Pagination :model="searched_customers" />
                             </div>
                         </div>
                     </div>
@@ -77,30 +77,36 @@ import Pagination from '@/Components/Pagination.vue';
 import destroy from '@/Mixins/destroy'
 
 export default {
+    props: ['customers'],
     components: {
         AppLayout,
         Head, Link,
         Table, Pagination
     },
     mixins: [destroy],
-    mounted() {
-        this.getCustomers(this.search)
-    },
     data: function() {
         return {
-            customers: {},
+            data: {},
+            searched_customers: {},
             search: ''
         }
     },
+    mounted() {
+        this.searched_customers = this.customers;
+    },
     watch: {
         search: function(val) {
+            if (!val) {
+                this.searched_customers = this.customers;
+                return;
+            }
             this.getCustomers(val);
         }
     },
     methods: {
         getCustomers(search) {
-            axios.post(route('customers.get', {search: search})).then(resp => {
-                this.customers = JSON.parse(JSON.stringify(resp.data));
+            axios.get(route('customers.index', {search: search})).then(resp => {
+                this.searched_customers = resp.data;
             })
         },
         delete(id) {
