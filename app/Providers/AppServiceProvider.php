@@ -24,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        \URL::forceScheme('http');
+
         Response::macro('success', function ($data) {
             return response()->json([
                 'success' => true,
