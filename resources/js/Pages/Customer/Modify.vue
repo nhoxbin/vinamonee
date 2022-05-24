@@ -200,7 +200,7 @@
                                                 </div>
                                             </div>
 
-                                            <div v-if="user.roles.isSaler" class="col-span-6 sm:col-span-6">
+                                            <div v-if="user.roles.isSaler && form.info.notes" class="col-span-6 sm:col-span-6">
                                                 <label for="notes_saler" class="block text-sm font-medium text-gray-700">
                                                     Ghi chú của sale
                                                 </label>
@@ -209,7 +209,7 @@
                                                 </div>
                                             </div>
 
-                                            <div v-if="user.roles.isAppraiser" class="col-span-6 sm:col-span-6">
+                                            <div v-if="user.roles.isAppraiser && form.info.notes" class="col-span-6 sm:col-span-6">
                                                 <label for="notes_appraiser" class="block text-sm font-medium text-gray-700">
                                                     Ghi chú của thẩm định
                                                 </label>
