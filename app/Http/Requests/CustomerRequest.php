@@ -39,8 +39,8 @@ class CustomerRequest extends FormRequest
             'info.loan.amt' => 'required|string',
             'info.loan.time' => 'required|string',
             'info.assets' => 'required|string',
-            'info.notes.saler' => 'string',
-            'info.notes.appraiser' => 'string',
+            'info.notes.saler' => 'nullable|string',
+            'info.notes.appraiser' => 'nullable|string',
             'info.relative_contacts.*.phone' => 'required|string|max:15',
             'info.relative_contacts.*.relative' => 'required|string'
         ];
